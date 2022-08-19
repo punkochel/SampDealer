@@ -2,7 +2,7 @@
 script_author("punkochel")
 script_version("1.0")
 
-MSG_SCRIPT_NOT_ACTIVED = "[SampDealer] {969595}Ñêðèïò âûêëþ÷åí. ×òîáû âêëþ÷èòü, ââåäèòå: /dealer"
+MSG_SCRIPT_NOT_ACTIVED = "[SampDealer] {969595}Ð¡ÐºÑ€Ð¸Ð¿Ñ‚ Ð²Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½. Ð§Ñ‚Ð¾Ð±Ñ‹ Ð²ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ: /dealer"
 COLOR_SCRIPTMSG = 0xFC2847
 
 -- lib's
@@ -30,7 +30,7 @@ function main()
    	end
 
    	-- Welcome information
-   	sampAddChatMessage("[SampDealer] {969595}Ñêðèïò óñïåøíî çàãðóæåí. Èíôîðìàöèÿ — {cccccc}/dealerhelp", COLOR_SCRIPTMSG)
+   	sampAddChatMessage("[SampDealer] {969595}Ð¡ÐºÑ€Ð¸Ð¿Ñ‚ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ð³Ñ€ÑƒÐ¶ÐµÐ½. Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ â€” {cccccc}/dealerhelp", COLOR_SCRIPTMSG)
 
    	-- Register command's
    	sampRegisterChatCommand("dealerhelp", dealerHelp)
@@ -98,8 +98,8 @@ function sampev.onServerMessage(color, message)
 		return 
 	end
 
-	if string.find(message, " Âû ïîëó÷èëè (.*) âèðò, îò (.*)]") then
-		local money, nick, id = string.match(message, " Âû ïîëó÷èëè (%d+) âèðò, îò (.*)%[(%d+)%]")
+	if string.find(message, " Ð’Ñ‹ Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ð»Ð¸ (.*) Ð²Ð¸Ñ€Ñ‚, Ð¾Ñ‚ (.*)]") then
+		local money, nick, id = string.match(message, " Ð’Ñ‹ Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ð»Ð¸ (%d+) Ð²Ð¸Ñ€Ñ‚, Ð¾Ñ‚ (.*)%[(%d+)%]")
 		money = tonumber(money)
 		id = tonumber(id)
 
@@ -122,7 +122,7 @@ function sampev.onServerMessage(color, message)
 
 		lua_thread.create(function()
         	wait(1200)
-        	sampSendChat(("%s[%d] Ñïàñèáî áîëüøîå çà ÷àåâûå — [%d âèðò / Âñåãî: %d âèðò]"):format(nick, id, money, players_tip[nick]))
+        	sampSendChat(("%s[%d] Ð¡Ð¿Ð°ÑÐ¸Ð±Ð¾ Ð±Ð¾Ð»ÑŒÑˆÐ¾Ðµ Ð·Ð° Ñ‡Ð°ÐµÐ²Ñ‹Ðµ â€” [%d Ð²Ð¸Ñ€Ñ‚ / Ð’ÑÐµÐ³Ð¾: %d Ð²Ð¸Ñ€Ñ‚]"):format(nick, id, money, players_tip[nick]))
     	end)
 
     	local f = io.open(fpath_players_tip, "w")
@@ -135,8 +135,8 @@ function sampev.onServerMessage(color, message)
 	    f:write(content)
 	    f:close()
 
-	elseif string.find(message, " SMS: mytips. Îòïðàâèòåëü: (.*)") then
-		local nick, id = string.match(message, " SMS: mytips. Îòïðàâèòåëü: (.*)%[(%d+)%]")
+	elseif string.find(message, " SMS: mytips. ÐžÑ‚Ð¿Ñ€Ð°Ð²Ð¸Ñ‚ÐµÐ»ÑŒ: (.*)") then
+		local nick, id = string.match(message, " SMS: mytips. ÐžÑ‚Ð¿Ñ€Ð°Ð²Ð¸Ñ‚ÐµÐ»ÑŒ: (.*)%[(%d+)%]")
 		local tips = 0
 		local tips_day = 0
 		if CheckTable(nick, players_tip, 1) then
@@ -148,7 +148,7 @@ function sampev.onServerMessage(color, message)
 
 		lua_thread.create(function()
         	wait(1200)
-        	sampSendChat(("×àåâûå èãðîêà %s[%d] — [Çà ñóòêè: %d $ / Âñåãî: %d $]"):format(nick, tonumber(id), tips_day, tips))
+        	sampSendChat(("Ð§Ð°ÐµÐ²Ñ‹Ðµ Ð¸Ð³Ñ€Ð¾ÐºÐ° %s[%d] â€” [Ð—Ð° ÑÑƒÑ‚ÐºÐ¸: %d $ / Ð’ÑÐµÐ³Ð¾: %d $]"):format(nick, tonumber(id), tips_day, tips))
     	end)
 	end
 end
@@ -156,19 +156,19 @@ end
 -- CMD function's
 function dealerHelp()
 	local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
-	sampAddChatMessage("» {969595}/dealer — âêëþ÷èòü/âûêëþ÷èòü ñêðèïò", COLOR_SCRIPTMSG)
-	sampAddChatMessage("» {969595}/gettips — ïðîâåðèòü ÷àåâûå", COLOR_SCRIPTMSG)
-	sampAddChatMessage("» {969595}/toptips — îòïðàâèòü â ÷àò îáùèé òîï ïî ÷àåâûì", COLOR_SCRIPTMSG)
-	sampAddChatMessage("» {969595}/toptipsday — îòïðàâèòü â ÷àò òîï ïî ÷àåâûì çà äåíü", COLOR_SCRIPTMSG)
-	sampAddChatMessage(("» {969595}/sms %d mytips — âûâåäåò â ÷àò èíôîðìàöèþ ïî ÷àåâûì èãðîêà"):format(id), COLOR_SCRIPTMSG)
-	sampAddChatMessage("»»» {969595}Ïîääåðæàòü àâòîðà: {cccccc}5536 9138 3677 4212 {969595}(Tinkoff)", COLOR_SCRIPTMSG)
+	sampAddChatMessage("Â» {969595}/dealer â€” Ð²ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ/Ð²Ñ‹ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ ÑÐºÑ€Ð¸Ð¿Ñ‚", COLOR_SCRIPTMSG)
+	sampAddChatMessage("Â» {969595}/gettips â€” Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ñ‡Ð°ÐµÐ²Ñ‹Ðµ", COLOR_SCRIPTMSG)
+	sampAddChatMessage("Â» {969595}/toptips â€” Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð¸Ñ‚ÑŒ Ð² Ñ‡Ð°Ñ‚ Ð¾Ð±Ñ‰Ð¸Ð¹ Ñ‚Ð¾Ð¿ Ð¿Ð¾ Ñ‡Ð°ÐµÐ²Ñ‹Ð¼", COLOR_SCRIPTMSG)
+	sampAddChatMessage("Â» {969595}/toptipsday â€” Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð¸Ñ‚ÑŒ Ð² Ñ‡Ð°Ñ‚ Ñ‚Ð¾Ð¿ Ð¿Ð¾ Ñ‡Ð°ÐµÐ²Ñ‹Ð¼ Ð·Ð° Ð´ÐµÐ½ÑŒ", COLOR_SCRIPTMSG)
+	sampAddChatMessage(("Â» {969595}/sms %d mytips â€” Ð²Ñ‹Ð²ÐµÐ´ÐµÑ‚ Ð² Ñ‡Ð°Ñ‚ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸ÑŽ Ð¿Ð¾ Ñ‡Ð°ÐµÐ²Ñ‹Ð¼ Ð¸Ð³Ñ€Ð¾ÐºÐ°"):format(id), COLOR_SCRIPTMSG)
+	sampAddChatMessage("Â»Â»Â» {969595}ÐŸÐ¾Ð´Ð´ÐµÑ€Ð¶Ð°Ñ‚ÑŒ Ð°Ð²Ñ‚Ð¾Ñ€Ð°: {cccccc}5536 9138 3677 4212 {969595}(Tinkoff)", COLOR_SCRIPTMSG)
 end
 
 function toggleScript()
 	if not toggle_script then
-		sampAddChatMessage("[SampDealer] {969595}Ñêðèïò àêòèâèðîâàí. ×òîáû âûêëþ÷èòü, ââåäèòå: /dealer", COLOR_SCRIPTMSG)
+		sampAddChatMessage("[SampDealer] {969595}Ð¡ÐºÑ€Ð¸Ð¿Ñ‚ Ð°ÐºÑ‚Ð¸Ð²Ð¸Ñ€Ð¾Ð²Ð°Ð½. Ð§Ñ‚Ð¾Ð±Ñ‹ Ð²Ñ‹ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ: /dealer", COLOR_SCRIPTMSG)
 	else
-		sampAddChatMessage("[SampDealer] {969595}Ñêðèïò äåàêòèâèðîâàí", COLOR_SCRIPTMSG)
+		sampAddChatMessage("[SampDealer] {969595}Ð¡ÐºÑ€Ð¸Ð¿Ñ‚ Ð´ÐµÐ°ÐºÑ‚Ð¸Ð²Ð¸Ñ€Ð¾Ð²Ð°Ð½", COLOR_SCRIPTMSG)
 	end
 	toggle_script = not toggle_script
 end
@@ -190,7 +190,7 @@ function getTips()
 			day_tips = day_tips + v
 		end
 	end
-	sampAddChatMessage(("[SampDealer] {969595}Èíôîðìàöèÿ î ÷àåâûõ — [Çà ñóòêè: %d $ / Âñåãî: %d $]"):format(day_tips, total_tips), COLOR_SCRIPTMSG)
+	sampAddChatMessage(("[SampDealer] {969595}Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ Ð¾ Ñ‡Ð°ÐµÐ²Ñ‹Ñ… â€” [Ð—Ð° ÑÑƒÑ‚ÐºÐ¸: %d $ / Ð’ÑÐµÐ³Ð¾: %d $]"):format(day_tips, total_tips), COLOR_SCRIPTMSG)
 end
 
 function topTips()
@@ -198,7 +198,7 @@ function topTips()
 		sampAddChatMessage(MSG_SCRIPT_NOT_ACTIVED, COLOR_SCRIPTMSG)
 		return
 	end
-	SendTopTips(players_tip, "Îáùèé ÒÎÏ")
+	SendTopTips(players_tip, "ÐžÐ±Ñ‰Ð¸Ð¹ Ð¢ÐžÐŸ")
 end
 
 function topTipsDay()
@@ -206,13 +206,13 @@ function topTipsDay()
 		sampAddChatMessage(MSG_SCRIPT_NOT_ACTIVED, COLOR_SCRIPTMSG)
 		return
 	end
-	SendTopTips(daily_tips, "ÒÎÏ çà ñóòêè")
+	SendTopTips(daily_tips, "Ð¢ÐžÐŸ Ð·Ð° ÑÑƒÑ‚ÐºÐ¸")
 end
 
 -- Subfunction cmd
 function SendTopTips(table_, text_)
 	if not table_ then
-		sampAddChatMessage("[SampDealer] {969595}Èíôîðìàöèÿ î ÷àåâûõ íå íàéäåíà", COLOR_SCRIPTMSG)
+		sampAddChatMessage("[SampDealer] {969595}Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ Ð¾ Ñ‡Ð°ÐµÐ²Ñ‹Ñ… Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð°", COLOR_SCRIPTMSG)
 		return
 	end
 
@@ -232,21 +232,21 @@ function SendTopTips(table_, text_)
 		end
 	end
 	lua_thread.create(function()
-		local str = "/do [×àåâûå / " .. text_ .. "] "
+		local str = "/do [Ð§Ð°ÐµÐ²Ñ‹Ðµ / " .. text_ .. "] "
 		if #arr_values then
-			str = ("%s 1. %s — %d $"):format(str, arr_keys[1], arr_values[1])
+			str = ("%s 1. %s â€” %d $"):format(str, arr_keys[1], arr_values[1])
 			if #arr_values > 1 then
-				str = ("%s / 2. %s — %d $"):format(str, arr_keys[2], arr_values[2])
+				str = ("%s / 2. %s â€” %d $"):format(str, arr_keys[2], arr_values[2])
 			end
 			sampSendChat(str)
 		end
 		wait(1500)
 
-		str = "/do [×àåâûå / " .. text_ .. "] "
+		str = "/do [Ð§Ð°ÐµÐ²Ñ‹Ðµ / " .. text_ .. "] "
 		if #arr_values > 2 then
-			str = ("%s 3. %s — %d $"):format(str, arr_keys[3], arr_values[3])
+			str = ("%s 3. %s â€” %d $"):format(str, arr_keys[3], arr_values[3])
 			if #arr_values > 3 then
-				str = ("%s / 4. %s — %d $"):format(str, arr_keys[4], arr_values[4])
+				str = ("%s / 4. %s â€” %d $"):format(str, arr_keys[4], arr_values[4])
 			end
 			sampSendChat(str)
 		end
