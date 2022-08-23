@@ -1,8 +1,8 @@
 -- I play on Samp-Rp Revolution, Piggly_Wiggly
 script_author("punkochel")
-script_version("1.0")
+script_version("1.1")
 script_url("github.com/punkochel/SampDealer")
-script_name("SampDealer v1.0")
+script_name("SampDealer v1.1")
 
 -- lib's
 local sampev = require "samp.events"
@@ -18,6 +18,7 @@ local toggle_script = false
 local players_tip = {}
 local daily_tips = {}
 local player_info = {}
+local flood_players = {}
 
 local work_directory = getWorkingDirectory()
 local fpath_players_tip = work_directory .. "/config/dealer/players_tip.json"
@@ -47,6 +48,7 @@ function main()
    	sampRegisterChatCommand("gettips", getTips)
    	sampRegisterChatCommand("toptips", topTips)
    	sampRegisterChatCommand("toptipsday", topTipsDay)
+   	sampRegisterChatCommand("dfdelay", dfDelay)
 
    	-- Create directories
    	if not doesDirectoryExist(work_directory .. "/config") then
@@ -130,11 +132,16 @@ function sampev.onServerMessage(color, message)
 				daily_tips[nick] = money
 			end
     	end
-
-		lua_thread.create(function()
-        	wait(1200)
-        	sampSendChat(u8:decode(("%s[%d] Спасибо большое за чаевые — [%d вирт / Всего: %d вирт]"):format(nick, id, money, players_tip[nick])))
-    	end)
+    	if CheckTable(nick, flood_players, 1) == false then
+			flood_players[nick] = 0
+		end
+    	if flood_players[nick] < getUnixTime() then
+    		flood_players[nick] = getUnixTime() + player_info['pFloodDelay']
+			lua_thread.create(function()
+	        	wait(1200)
+	        	sampSendChat(u8:decode(("%s[%d] Спасибо большое за чаевые — [%d вирт / Всего: %d вирт]"):format(nick, id, money, players_tip[nick])))
+	    	end)
+    	end
 
     	local f = io.open(fpath_players_tip, "w")
     	local content = encodeJson(players_tip)
@@ -156,11 +163,16 @@ function sampev.onServerMessage(color, message)
 		if CheckTable(nick, daily_tips, 1) then
 			tips_day = daily_tips[nick]
 		end
-
-		lua_thread.create(function()
-        	wait(1200)
-        	sampSendChat(u8:decode(("Чаевые игрока %s[%d] — [За сутки: %d $ / Всего: %d $]"):format(nick, tonumber(id), tips_day, tips)))
-    	end)
+		if CheckTable(nick, flood_players, 1) == false then
+			flood_players[nick] = 0
+		end
+    	if flood_players[nick] < getUnixTime() then
+    		flood_players[nick] = getUnixTime() + player_info['pFloodDelay']
+			lua_thread.create(function()
+	        	wait(1200)
+	        	sampSendChat(u8:decode(("Чаевые игрока %s[%d] — [За сутки: %d $ / Всего: %d $]"):format(nick, tonumber(id), tips_day, tips)))
+	    	end)
+    	end
 	end
 end
 
@@ -171,6 +183,7 @@ function dealerHelp()
 	sampAddChatMessage(u8:decode("» {969595}/gettips — проверить чаевые"), COLOR_SCRIPTMSG)
 	sampAddChatMessage(u8:decode("» {969595}/toptips — отправить в чат общий топ по чаевым"), COLOR_SCRIPTMSG)
 	sampAddChatMessage(u8:decode("» {969595}/toptipsday — отправить в чат топ по чаевым за день"), COLOR_SCRIPTMSG)
+	sampAddChatMessage(u8:decode("» {969595}/dfdelay [сек] — установить задержку отдельно для каждого игрока"), COLOR_SCRIPTMSG)
 	sampAddChatMessage(u8:decode(("» {969595}/sms %d mytips — выведет в чат информацию по чаевым игрока"):format(id)), COLOR_SCRIPTMSG)
 	sampAddChatMessage(u8:decode("»»» {969595}Поддержать автора: {cccccc}5536 9138 3677 4212 {969595}(Tinkoff)"), COLOR_SCRIPTMSG)
 end
@@ -202,6 +215,23 @@ function getTips()
 		end
 	end
 	sampAddChatMessage(u8:decode(("[SampDealer] {969595}Информация о чаевых — [За сутки: %d $ / Всего: %d $]"):format(day_tips, total_tips)), COLOR_SCRIPTMSG)
+end
+
+function dfDelay(str)
+	if str:find("%d") then
+		if tonumber(str) < 0 then
+			sampAddChatMessage(u8:decode("[SampDealer] {969595}Задержка не может быть отрицательной"), COLOR_SCRIPTMSG)
+			return
+		end
+		player_info['pFloodDelay'] = tonumber(str)
+		local content = encodeJson(player_info)
+		local f = io.open(fpath_player_info, "w")
+		f:write(content)
+		f:close()
+		sampAddChatMessage(u8:decode("[SampDealer] {969595}Задержка установлена: " .. str .. " сек."), COLOR_SCRIPTMSG)
+	else
+		sampAddChatMessage(u8:decode("[SampDealer] {969595}Неверное значение"), COLOR_SCRIPTMSG)
+	end
 end
 
 function topTips()
@@ -268,7 +298,8 @@ end
 -- Other
 function GeneratePlayerInfoFile()
 	local s = {
-		pDateDailyTop = "01.01.1970"
+		pDateDailyTop = "01.01.1970",
+		pFloodDelay = 10
 	}
 	local f = io.open(fpath_player_info, "w")
 	s = encodeJson(s)
@@ -306,4 +337,9 @@ function CheckTable(arg, table_, mode)
         end
     end
     return false
+end
+
+function getUnixTime()
+	local time = os.time(os.date("!*t"))
+	return tonumber(time)
 end
